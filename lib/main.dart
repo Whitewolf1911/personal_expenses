@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_expenses/widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
 import 'models/transaction.dart';
+import './widgets/chart.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,9 +16,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.amber
-      ),
+          primarySwatch: Colors.purple,
+          accentColor: Colors.amber,
+          fontFamily: 'Quicksand',
+          appBarTheme: AppBarTheme(
+              titleTextStyle: TextStyle(fontFamily: 'OpenSans', fontSize: 20))),
       home: MyHomePage(),
     );
   }
@@ -29,13 +32,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
   final List<Transaction> _userTransaction = [
-    Transaction(
-        id: 't1', date: DateTime.now(), title: 'New Shoes', amount: 23.99),
-    Transaction(
-        id: 't2', date: DateTime.now(), title: 'New Tshirt', amount: 7.99)
+    // Transaction(
+    //     id: 't1', date: DateTime.now(), title: 'New Shoes', amount: 23.99),
+    // Transaction(
+    //     id: 't2', date: DateTime.now(), title: 'New Tshirt', amount: 7.99)
   ];
+
+  List<Transaction> get _recentTransactions {
+    return _userTransaction.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
 
   void _addNewTransaction(String txTitle, double txAmount) {
     final newTx = Transaction(
@@ -77,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               child: Card(
-                child: Container(color: Colors.amber, child: Text('CHART')),
+                child: Container(child: Chart(_recentTransactions)),
                 elevation: 5,
               ),
             ),
